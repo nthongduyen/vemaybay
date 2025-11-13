@@ -34,14 +34,22 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.NguoiDung::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'so_dien_thoai' => ['nullable', 'string', 'digits:10', 'regex:/^0/'],
+            'dia_chi' => ['nullable', 'string', 'max:255'],
+        ],[
+            // (Tùy chọn) Thêm thông báo lỗi Tiếng Việt
+            'so_dien_thoai.digits' => 'Số điện thoại phải đủ 10 chữ số.',
+            'so_dien_thoai.regex' => 'Số điện thoại phải bắt đầu bằng số 0.',
         ]);
 
         // ---- BẮT ĐẦU THAY ĐỔI ----
         $user = NguoiDung::create([
             'ho_ten' => $request->name, // Ánh xạ 'name' -> 'ho_ten'
             'email' => $request->email,
-            'mat_khau' => Hash::make($request->password), // Ánh xạ 'password' -> 'mat_khau'
-            'vai_tro' => 'khach_hang', // Mặc định khi đăng ký
+            'mat_khau' => Hash::make($request->password),
+            'so_dien_thoai' => $request->so_dien_thoai,
+            'dia_chi' => $request->dia_chi,
+            'vai_tro' => 'khach_hang',
             'trang_thai' => 'hoat_dong',
         ]);
         // ---- KẾT THÚC THAY ĐỔI ----
