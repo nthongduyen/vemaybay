@@ -31,28 +31,42 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            // Yêu cầu 'name' (ho_ten) phải là string, max 255.
+            // Thêm regex để cấm số/ký tự đặc biệt (khắc phục UT18, UT19)
+            'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.NguoiDung::class],
+
+            // Mật khẩu: yêu cầu, xác nhận, và mặc định 8 ký tự
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'so_dien_thoai' => ['nullable', 'string', 'digits:10', 'regex:/^0/'],
-            'dia_chi' => ['nullable', 'string', 'max:255'],
+
+            // Cập nhật: Đổi 'nullable' thành 'required' để khớp với UT14, UT15
+            // Tên trường: Giữ là 'so_dien_thoai' để khớp với form của Laravel Breeze
+            // Rule: digits:10 và regex:/^0/ (đã đúng)
+            'so_dien_thoai' => ['required', 'string', 'digits:10', 'regex:/^0/'],
+
+            // Cập nhật: Đổi 'nullable' thành 'required' để khớp với UT20
+            'dia_chi' => ['required', 'string', 'max:255'],
         ],[
             // (Tùy chọn) Thêm thông báo lỗi Tiếng Việt
+            'name.regex' => 'Họ tên không được chứa ký tự đặc biệt hoặc số.', // Thêm message này
+            'so_dien_thoai.required' => 'Số điện thoại không được để trống.', // Thêm message này
+            'dia_chi.required' => 'Địa chỉ không được để trống.', // Thêm message này
             'so_dien_thoai.digits' => 'Số điện thoại phải đủ 10 chữ số.',
             'so_dien_thoai.regex' => 'Số điện thoại phải bắt đầu bằng số 0.',
         ]);
 
-        // ---- BẮT ĐẦU THAY ĐỔI ----
+        // ---- LOGIC LƯU DỮ LIỆU ĐÃ ĐÚNG ----
         $user = NguoiDung::create([
-            'ho_ten' => $request->name, // Ánh xạ 'name' -> 'ho_ten'
+            'ho_ten' => $request->name,
             'email' => $request->email,
             'mat_khau' => Hash::make($request->password),
             'so_dien_thoai' => $request->so_dien_thoai,
             'dia_chi' => $request->dia_chi,
             'vai_tro' => 'khach_hang',
-            'trang_thai' => 'hoat_dong',
+            // FIX LỖI: Cột `trang_thai` trong DB (nguoi_dung) là kiểu số (INT/TINYINT)
+            // Đã thay 'hoat_dong' bằng giá trị số 1 (Active)
+            'trang_thai' => 1,
         ]);
-        // ---- KẾT THÚC THAY ĐỔI ----
 
         event(new Registered($user));
 
@@ -61,3 +75,5 @@ class RegisteredUserController extends Controller
         return redirect(RouteServiceProvider::HOME);
     }
 }
+
+

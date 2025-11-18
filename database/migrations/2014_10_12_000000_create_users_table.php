@@ -8,29 +8,42 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        // QUAN TRỌNG: Đổi tên bảng từ 'users' thành 'nguoi_dung'
+        Schema::create('nguoi_dung', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+
+            // Cột tên: Đổi từ 'name' thành 'ho_ten' (theo Model NguoiDung)
+            $table->string('ho_ten');
+
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+
+            // Cột mật khẩu: Đổi từ 'password' thành 'mat_khau'
+            $table->string('mat_khau');
+
+            // Thêm các cột bắt buộc khác trong Model NguoiDung
+            $table->string('so_dien_thoai')->nullable();
+            $table->string('dia_chi')->nullable();
+            $table->string('vai_tro')->default('khach_hang');
+            $table->integer('trang_thai')->default(1);
+
             $table->rememberToken();
-            $table->timestamps();
+
+            // Timestamps: Chỉ dùng 'ngay_tao' và bỏ 'updated_at' (theo Model NguoiDung)
+            $table->timestamp('ngay_tao')->useCurrent();
+            // $table->timestamps(); // Bỏ dòng này
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('users');
+        // QUAN TRỌNG: Đổi tên bảng thành 'nguoi_dung'
+        Schema::dropIfExists('nguoi_dung');
     }
 };
