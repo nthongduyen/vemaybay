@@ -13,6 +13,12 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
+     * Tên bảng trong database.
+     * Cần thêm dòng này vì tên bảng là 'nguoi_dung' chứ không phải 'users'.
+     */
+    protected $table = 'nguoi_dung';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

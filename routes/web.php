@@ -10,6 +10,8 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\DealHunterController;
+// THÊM: Import Controller cho Quản lý Chuyến bay
+use App\Http\Controllers\ChuyenBayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +33,10 @@ Route::get('/tin-tuc/{slug}', [NewsController::class, 'show'])->name('news.show'
 // --- API KIỂM TRA KHUYẾN MÃI (Cho Alpine.js) ---
 Route::get('/kiem-tra-khuyen-mai/{code}', function ($code) {
     $khuyenMai = \App\Models\KhuyenMai::where('ma_khuyen_mai', $code)
-                                    ->where('trang_thai', 'hieu_luc')
-                                    ->where('ngay_bat_dau', '<=', now())
-                                    ->where('ngay_ket_thuc', '>=', now())
-                                    ->first();
+                                     ->where('trang_thai', 'hieu_luc')
+                                     ->where('ngay_bat_dau', '<=', now())
+                                     ->where('ngay_ket_thuc', '>=', now())
+                                     ->first();
 
     if (!$khuyenMai) {
         return response()->json([
@@ -72,6 +74,14 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// --- CÁC ROUTE ADMIN CẦN QUYỀN TRUY CẬP (THÊM VÀO ĐÂY) ---
+// Giả định rằng bạn có một middleware hoặc Gate tên là 'admin'
+Route::middleware(['auth', 'can:admin'])->prefix('admin')->group(function () {
+    // Tự động tạo 7 route cần thiết: index, create, store, show, edit, update, destroy
+    Route::resource('chuyen-bay', ChuyenBayController::class);
+});
+
 
 Route::get('/ho-tro', [SupportController::class, 'index'])->name('support.index');
 Route::get('/san-ve-re', [DealHunterController::class, 'index'])->name('deal.index');

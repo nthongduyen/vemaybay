@@ -23,7 +23,7 @@ class BaiViet extends Model
         'noi_dung',
         'hinh_anh_dai_dien',
         'trang_thai',
-        'luot_xem',
+        //'luot_xem',
         'ngay_xuat_ban',
     ];
 

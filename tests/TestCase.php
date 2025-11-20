@@ -3,23 +3,24 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\App; // BẮT BUỘC: Import Facade App
+use Illuminate\Foundation\Testing\RefreshDatabase; // BẮT BUỘC: Dùng trait này để dọn dẹp database
+use Illuminate\Support\Facades\App;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    // BẮT BUỘC: Sử dụng RefreshDatabase để reset database sau mỗi test
+    use RefreshDatabase;
 
     /**
      * Thiết lập các cấu hình cần thiết trước khi chạy mỗi bài test.
-     * Phương thức này chạy trước mỗi kịch bản test.
      */
     protected function setUp(): void
     {
         // Phải gọi parent::setUp() trước
         parent::setUp();
 
-        // FIX LỖI: Buộc môi trường test sử dụng Locale 'vi' (Tiếng Việt).
-        // Lệnh này phải nằm TRONG phương thức setUp().
+        // FIX LOCALE: Buộc môi trường test sử dụng Locale 'vi' (Tiếng Việt).
         App::setLocale('vi');
     }
 }

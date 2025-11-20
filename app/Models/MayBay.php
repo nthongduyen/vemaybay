@@ -15,7 +15,8 @@ class MayBay extends Model
     protected $fillable = [
         'ma_may_bay',
         'ten_may_bay',
-        'hang_hang_khong',
+        //'hang_hang_khong', sửa thành 'hang_san_xuat',
+        'hang_san_xuat',
         'so_ghe',
         'trang_thai',
     ];

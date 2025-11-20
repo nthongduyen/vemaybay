@@ -11,30 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // QUAN TRỌNG: Đổi tên bảng từ 'users' thành 'nguoi_dung'
+        // Tên bảng phải là 'nguoi_dung'
         Schema::create('nguoi_dung', function (Blueprint $table) {
             $table->id();
 
-            // Cột tên: Đổi từ 'name' thành 'ho_ten' (theo Model NguoiDung)
             $table->string('ho_ten');
-
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
 
-            // Cột mật khẩu: Đổi từ 'password' thành 'mat_khau'
+            // Tên cột mật khẩu phải là 'mat_khau'
             $table->string('mat_khau');
 
-            // Thêm các cột bắt buộc khác trong Model NguoiDung
             $table->string('so_dien_thoai')->nullable();
             $table->string('dia_chi')->nullable();
-            $table->string('vai_tro')->default('khach_hang');
-            $table->integer('trang_thai')->default(1);
+
+            // Dùng enum cho vai trò (Admin, Nhân viên, Khách hàng)
+            $table->enum('vai_tro', ['admin', 'nhan_vien', 'khach_hang'])->default('khach_hang');
+
+            // Dùng boolean cho trạng thái (1: Kích hoạt, 0: Khóa)
+            $table->boolean('trang_thai')->default(true)->comment('1: Kích hoạt, 0: Khóa');
 
             $table->rememberToken();
 
-            // Timestamps: Chỉ dùng 'ngay_tao' và bỏ 'updated_at' (theo Model NguoiDung)
+            // Chỉ dùng 'ngay_tao'
             $table->timestamp('ngay_tao')->useCurrent();
-            // $table->timestamps(); // Bỏ dòng này
         });
     }
 
@@ -43,7 +43,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // QUAN TRỌNG: Đổi tên bảng thành 'nguoi_dung'
+        // Đảm bảo tên bảng là 'nguoi_dung'
         Schema::dropIfExists('nguoi_dung');
     }
 };

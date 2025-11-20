@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate; // Đã bỏ comment và kích hoạt
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +13,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        //
     ];
 
     /**
@@ -25,6 +25,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        // ĐỊNH NGHĨA GATE CHO ADMIN
+        // Đây là Gate được sử dụng trong middleware 'can:admin' để kiểm tra quyền truy cập.
+        Gate::define('admin', function ($user) {
+            // Kiểm tra cột vai_tro trong Model NguoiDung phải là giá trị 'admin'
+            return $user->vai_tro === 'admin';
+        });
     }
 }
